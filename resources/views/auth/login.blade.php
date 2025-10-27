@@ -30,12 +30,6 @@
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
-                           @if ($errors->any())
-    <div class="alert alert-danger text-center" style="margin-bottom: 10px;">
-        {{ $errors->first('email') }}
-    </div>
-@endif
-
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul class="mb-0">
@@ -45,6 +39,7 @@
         </ul>
     </div>
 @endif
+
 
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
