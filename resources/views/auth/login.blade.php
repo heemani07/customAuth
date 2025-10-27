@@ -12,8 +12,8 @@
     <title>SB Admin 2 - Login</title>
 
     <!-- Custom fonts for this template-->
-<link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
-<link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+<link href="{{ asset('theme/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+<link href="{{ asset('theme/css/sb-admin-2.min.css') }}" rel="stylesheet">
 
 
 </head>
@@ -82,11 +82,11 @@
 
     </div>
 
-<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-
+<script src="{{ asset('theme/vendor/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('theme/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('theme/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<script src="{{ asset('theme/js/sb-admin-2.min.js') }}"></script>
+theme/
 
 </body>
 
