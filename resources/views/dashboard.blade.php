@@ -1,18 +1,72 @@
 @extends('layout.app')
 
 @section('content')
-    <h1 class="h3 mb-4 text-gray-800">Welcome, {{ Auth::user()->name }} 👋</h1>
+<!-- Topbar -->
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-    <div class="row">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                        Users</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $userCount }}</div>
-                </div>
+    <!-- Sidebar Toggle (for mobile view) -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Page Heading or Title -->
+<form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav ml-auto">
+
+        <!-- Nav Item - User Information -->
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                    {{ Auth::user()->name }}
+                </span>
+                <img class="img-profile rounded-circle"
+                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random">
+            </a>
+
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Profile
+                </a>
+
+                <div class="dropdown-divider"></div>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Logout
+                    </button>
+                </form>
             </div>
-        </div>
-    </div>
+        </li>
+    </ul>
+
+</nav>
+<!-- End of Topbar -->
+
+
+
+<div class="row">
+    <x-dashboard-card title="Users" :count="$userCount" color="primary" />
+</div>
+
 @endsection
 
