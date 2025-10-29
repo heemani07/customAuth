@@ -23,5 +23,15 @@ Route::get('/', function () {
 
 
 
+    // routes/web.php
+    Route::get('/users-data', [UserController::class, 'getUsersData'])->name('users.data');
+
+    // app/Http/Controllers/UserController.php
+
+
+
+
+
+
 
 

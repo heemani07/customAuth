@@ -42,7 +42,11 @@ public function login(Request $request)
         $request->session()->regenerateToken();
         return redirect('/login')->with('success', 'You have been logged out successfully!');;
     }
+    public function showLoginForm(): View
+    {
 
+        return view('auth.login');
+    }
     public function registration(): View
     {
 
