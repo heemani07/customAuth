@@ -12,26 +12,19 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 class AuthController extends Controller
 {
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
-
 public function login(Request $request)
 {
 
-    $request->validate([
+    $credentials = $request->validate([
         'email' => 'required|email',
         'password' => 'required|min:6',
     ]);
 
 
-    $credentials = $request->only('email', 'password');
-
-
     if (Auth::attempt($credentials)) {
+
         $request->session()->regenerate();
-        return redirect()->intended('/dashboard');
+       return redirect()->intended('/dashboard');
     }
 
 
@@ -39,6 +32,7 @@ public function login(Request $request)
         'email' => 'Invalid email or password.',
     ])->onlyInput('email');
 }
+
 
 
     public function logout(Request $request)
@@ -51,6 +45,7 @@ public function login(Request $request)
 
     public function registration(): View
     {
+
         return view('auth.registration');
     }
 

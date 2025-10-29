@@ -31,7 +31,7 @@
     <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-users"></i>
-            <span>Users</span>
+            <a href="{{ route('users.index') }}"><span>Users</span></a>
         </a>
     </li>
 
