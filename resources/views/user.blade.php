@@ -3,7 +3,7 @@
 
 
 <div class="container">
- <x-page-header title="User Management" route="{{ route('register')}}"  buttonValue="User"/>
+ <x-page-header title="User Management" route="{{ route('userRegister')}}"  buttonValue="User"/>
 
 
 

@@ -2,22 +2,27 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+
 class PermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $permission = Permission::create(['name' => 'edit user']);
-        $permission = Permission::create(['name' => 'create user']);
-        $permission = Permission::create(['name' => 'delete user']);
-        $permission = Permission::create(['name' => 'read user']);
+        $modules = [
+            'user' => ['create', 'read', 'edit', 'delete'],
+            'category' => ['create', 'read', 'edit', 'delete'],
+            'product' => ['create', 'read'],
+        ];
 
+        foreach ($modules as $module => $actions)
+            array_map(fn($action) =>
+                Permission::firstOrCreate(
+                    ['name' => "{$action} {$module}"],
+                    ['module_name' => $module]
+                ),
+            $actions);
 
+        $this->command->info('✅ Permissions seeded successfully!');
     }
 }

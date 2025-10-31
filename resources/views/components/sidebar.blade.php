@@ -16,6 +16,8 @@
      <x-menu-item  name="Dashboard"  icon="tachometer-alt" path="dashboard"/>
      <x-menu-item  name="User"  icon="user" path="users.index"/>
      <x-menu-item  name="Category"  icon="clipboard-list" path="categories.index"/>
+     <x-menu-item  name="Roles and Permissions"  icon="clipboard-list" path="permissions.index"/>
+
 
 
 
