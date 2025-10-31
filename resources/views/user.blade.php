@@ -1,12 +1,10 @@
-@extends('layout.app')
-
-@section('content')
-<head>
+<x-master title="User Management">
+    <x-top-bar/>
 
 
-</head>
 <div class="container">
-    <h1> User Manager</h1>
+ <x-page-header title="User Management" route="{{ route('register')}}"  buttonValue="User"/>
+
 
 
     @if ($users->count())
@@ -39,12 +37,12 @@
             </tbody>
         </table>
     @else
-        <p>No tasks available.</p>
+        <p>No Users available.</p>
     @endif
 </div>
+</x-master>
 
 
 
 
 
-@endsection

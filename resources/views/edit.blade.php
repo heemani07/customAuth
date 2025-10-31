@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html>
+<x-master title="Edit User">
+<x-top-bar/>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>User Registration | Custom Auth</title>
+
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
         rel="stylesheet" crossorigin="anonymous">
 
-  <style>
-    body {
-      background: #F8F9FA;
-    }
-  </style>
+
 </head>
 <body>
 
@@ -104,6 +98,4 @@
     </div>
   </div>
 </section>
-
-</body>
-</html>
+</x-master>
