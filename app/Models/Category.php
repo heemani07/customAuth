@@ -11,4 +11,10 @@ class Category extends Model
         'description',
 
     ];
+
+    public function destinations()
+{
+    return $this->belongsToMany(Destination::class);
+}
+
 }

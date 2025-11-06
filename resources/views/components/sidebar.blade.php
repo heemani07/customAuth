@@ -13,10 +13,23 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
+
      <x-menu-item  name="Dashboard"  icon="tachometer-alt" path="dashboard"/>
+       @can('create user')
      <x-menu-item  name="User"  icon="user" path="users.index"/>
+
+           @endcan
+           @hasanyrole('admin|editor')
      <x-menu-item  name="Category"  icon="clipboard-list" path="categories.index"/>
+     <x-menu-item  name="Destination"  icon="globe" path="destinations.index"/>
+     <x-menu-item  name="Packages"  icon="plane" path="trip-packages.index"/>
+     <x-menu-item  name="FAQs"  icon="question" path="faqs.index"/>
+
+     @endhasanyrole
+     @role('admin')
      <x-menu-item  name="Roles and Permissions"  icon="clipboard-list" path="permissions.index"/>
+           @endrole
+
 
 
 

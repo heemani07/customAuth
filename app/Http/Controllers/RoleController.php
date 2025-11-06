@@ -39,4 +39,14 @@ class RoleController extends Controller
         'role' => $role
     ]);
 }
+public function destroy(Role $role)
+{
+    $role->delete();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Role deleted successfully!'
+    ]);
+}
+
 }

@@ -2,11 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DestinationController;
+use App\Http\Controllers\FaqsController;
+use App\Http\Controllers\TripPackageController;
 use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,9 +38,14 @@ Route::middleware('auth')->group(function () {
     | Role & Permission Management
     |--------------------------------------------------------------------------
     */
+    Route::get('/users-data', [UserController::class, 'getUsersData'])->name('users.data');
+    Route::post('/users/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
+
+
     Route::get('/permissions', [RolePermissionController::class, 'index'])->name('permissions.index');
     Route::post('/permissions/update', [RolePermissionController::class, 'update'])->name('permissions.update');
     Route::post('/permissions/add-role', [RoleController::class, 'storeRole'])->name('roles.store');
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
     /*
     |--------------------------------------------------------------------------
@@ -52,8 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    // Optional: If you want DataTable API endpoint
-    Route::get('/users-data', [UserController::class, 'getUsersData'])->name('users.data');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -61,7 +68,38 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::resource('categories', CategoryController::class);
+
+        /*
+    |--------------------------------------------------------------------------
+    | Destination Management
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('destinations', DestinationController::class);
+   Route::delete('/trip-packages/images/{id}', [TripPackageController::class, 'destroyImage'])->name('trip-packages.images.destroy');
+
+
 });
+
+        /*
+    |--------------------------------------------------------------------------
+    | trip package Management
+    |--------------------------------------------------------------------------
+    */
+
+
+Route::resource('trip-packages', TripPackageController::class);
+Route::delete('trip-packages/images/{id}', [TripPackageController::class, 'destroyImage'])
+    ->name('trip-packages.images.destroy');
+Route::post('trip-packages/upload-image', [TripPackageController::class, 'uploadImage'])
+    ->name('trip-packages.upload.image');
+
+            /*
+    |--------------------------------------------------------------------------
+    | faq Management
+    |--------------------------------------------------------------------------
+    */
+Route::resource('faqs', FaqsController::class);
+
 
 /*
 |--------------------------------------------------------------------------
