@@ -37,7 +37,7 @@
                                     id="category_name"
                                     placeholder="Category Name"
                                     value="{{ old('category_name') }}"
-                                    required>
+                                    >
                                 @error('category_name')
                                     <span class="text-danger small"><strong>{{ $message }}</strong></span>
                                 @enderror
@@ -55,7 +55,7 @@
                                     id="description"
                                     placeholder="Enter description"
                                     style="height: 150px;"
-                                    required>{{ old('description', $category->description ?? '') }}</textarea>
+                                    >{{ old('description', $category->description ?? '') }}</textarea>
                                 @error('description')
                                     <span class="text-danger small"><strong>{{ $message }}</strong></span>
                                 @enderror

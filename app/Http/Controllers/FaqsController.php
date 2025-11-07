@@ -2,63 +2,81 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Faq;
+use App\Http\Requests\FaqRequest;
 use Illuminate\Http\Request;
 
 class FaqsController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all FAQs
      */
     public function index()
     {
-        return view('faqs.index');
+        $faqs = Faq::latest()->get();
+        return view('faqs.index', compact('faqs'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created FAQ
      */
-    public function create()
+    public function store(FaqRequest $request)
     {
-        //
+        try {
+            Faq::create($request->validated());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'FAQ added successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Update the specified FAQ
      */
-    public function store(Request $request)
+    public function update(FaqRequest $request, Faq $faq)
     {
-        //
+        try {
+            $faq->update($request->validated());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'FAQ updated successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Update failed. Please try again.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Remove the specified FAQ
      */
-    public function show(string $id)
+    public function destroy(Faq $faq)
     {
-        //
-    }
+        try {
+            $faq->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return response()->json([
+                'success' => true,
+                'message' => 'FAQ deleted successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete FAQ. Please try again.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 }
