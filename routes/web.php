@@ -26,11 +26,12 @@ Route::post('/registration', [AuthController::class, 'postRegistration'])->name(
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard (Protected)
+| Protected Routes (Require Login)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /*
@@ -41,7 +42,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/users-data', [UserController::class, 'getUsersData'])->name('users.data');
     Route::post('/users/update-role', [UserController::class, 'updateRole'])->name('users.updateRole');
 
-
     Route::get('/permissions', [RolePermissionController::class, 'index'])->name('permissions.index');
     Route::post('/permissions/update', [RolePermissionController::class, 'update'])->name('permissions.update');
     Route::post('/permissions/add-role', [RoleController::class, 'storeRole'])->name('roles.store');
@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | User Management (Custom Registration + CRUD)
+    | User Management
     |--------------------------------------------------------------------------
     */
     Route::get('/user/register', [UserController::class, 'showRegistrationForm'])->name('userRegister');
@@ -60,8 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-
-
     /*
     |--------------------------------------------------------------------------
     | Category Management
@@ -69,43 +67,37 @@ Route::middleware('auth')->group(function () {
     */
     Route::resource('categories', CategoryController::class);
 
-        /*
+    /*
     |--------------------------------------------------------------------------
     | Destination Management
     |--------------------------------------------------------------------------
     */
     Route::resource('destinations', DestinationController::class);
-   Route::delete('/trip-packages/images/{id}', [TripPackageController::class, 'destroyImage'])->name('trip-packages.images.destroy');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Trip Package Management
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('trip-packages', TripPackageController::class);
+    Route::delete('trip-packages/images/{id}', [TripPackageController::class, 'destroyImage'])
+        ->name('trip-packages.images.destroy');
+    Route::post('trip-packages/upload-image', [TripPackageController::class, 'uploadImage'])
+        ->name('trip-packages.upload.image');
 
+    /*
+    |--------------------------------------------------------------------------
+    | FAQ Management
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('faqs', FaqsController::class);
 });
-
-        /*
-    |--------------------------------------------------------------------------
-    | trip package Management
-    |--------------------------------------------------------------------------
-    */
-
-
-Route::resource('trip-packages', TripPackageController::class);
-Route::delete('trip-packages/images/{id}', [TripPackageController::class, 'destroyImage'])
-    ->name('trip-packages.images.destroy');
-Route::post('trip-packages/upload-image', [TripPackageController::class, 'uploadImage'])
-    ->name('trip-packages.upload.image');
-
-            /*
-    |--------------------------------------------------------------------------
-    | faq Management
-    |--------------------------------------------------------------------------
-    */
-Route::resource('faqs', FaqsController::class);
-
 
 /*
 |--------------------------------------------------------------------------
-| Default Route
+| Default Route (Public)
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });

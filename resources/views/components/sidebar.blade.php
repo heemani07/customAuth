@@ -1,44 +1,55 @@
-<!-- Sidebar -->
+
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-    <!-- Sidebar - Brand -->
+
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url('/dashboard') }}">
-        <div class="sidebar-brand-icon  ">
+        <div class="sidebar-brand-icon">
             <i class="fas fa-archway"></i>
         </div>
         <div class="sidebar-brand-text mx-3">Let's Travel</div>
     </a>
 
-    <!-- Divider -->
+
     <hr class="sidebar-divider my-0">
 
-    <!-- Nav Item - Dashboard -->
 
-     <x-menu-item  name="Dashboard"  icon="tachometer-alt" path="dashboard"/>
-       @can('create user')
-     <x-menu-item  name="User"  icon="user" path="users.index"/>
-
-           @endcan
-           @hasanyrole('admin|editor')
-     <x-menu-item  name="Category"  icon="clipboard-list" path="categories.index"/>
-     <x-menu-item  name="Destination"  icon="globe" path="destinations.index"/>
-     <x-menu-item  name="Packages"  icon="plane" path="trip-packages.index"/>
-     <x-menu-item  name="FAQs"  icon="question" path="faqs.index"/>
-
-     @endhasanyrole
-     @role('admin')
-     <x-menu-item  name="Roles and Permissions"  icon="clipboard-list" path="permissions.index"/>
-           @endrole
+    <x-menu-item name="Dashboard" icon="tachometer-alt" path="dashboard" />
 
 
+    @can('read user')
+        <x-menu-item name="Users" icon="user" path="users.index" />
+    @endcan
+
+    @can('read category')
+        <x-menu-item name="Categories" icon="clipboard-list" path="categories.index" />
+    @endcan
 
 
+    @can('read destination')
+        <x-menu-item name="Destinations" icon="globe" path="destinations.index" />
+    @endcan
 
-    <!-- Nav Item - Users -->
-    <!-- Sidebar Toggler -->
+
+    @can('read package')
+        <x-menu-item name="Packages" icon="plane" path="trip-packages.index" />
+    @endcan
+
+
+    @can('read faq')
+        <x-menu-item name="FAQs" icon="question" path="faqs.index" />
+    @endcan
+
+    @can('read package')
+        <x-menu-item name="Roles & Permissions" icon="lock" path="permissions.index" />
+    @endcan
+
+
+    <hr class="sidebar-divider d-none d-md-block">
+
+
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
 
 </ul>
-<!-- End of Sidebar -->
+

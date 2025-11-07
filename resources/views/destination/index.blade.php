@@ -2,15 +2,12 @@
     <x-top-bar />
 
     <div class="container mt-4">
-        <x-page-header title="Destination Management" route="{{ route('destinations.create') }}" buttonValue="Add Destination" />
-
-        {{-- Show Toastr messages --}}
-        @if(session('success'))
-            <script>toastr.success("{{ session('success') }}");</script>
-        @elseif(session('error'))
-            <script>toastr.error("{{ session('error') }}");</script>
-        @endif
-
+        <!-- <x-page-header title="Destination Management" route="{{ route('destinations.create') }}" buttonValue="Destination" /> -->
+<x-page-header
+    title="Destination Management"
+    route="{{ route('destinations.create') }}"
+    :buttonValue="auth()->user()->can('create destination') ? 'Destination' : null"
+/>
         {{-- Table --}}
         @if($destinations->count())
             <div class="card shadow-sm">
@@ -18,20 +15,21 @@
                     <table class="table table-bordered align-middle text-center" id="myDataTable">
                         <thead class="table-light">
                             <tr>
-
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Categories</th>
                                 <th>Image</th>
                                 <th>Status</th>
+@canany(['edit destination','delete destination'])
+
                                 <th>Actions</th>
+@endcanany
+
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($destinations as $destination)
                                 <tr>
-
-
                                     {{-- Name --}}
                                     <td>{{ $destination->name }}</td>
 
@@ -44,7 +42,8 @@
                                             <span class="badge bg-info text-dark">{{ $cat->category_name }}</span>
                                         @endforeach
                                     </td>
-                                     {{-- Image --}}
+
+                                    {{-- Image --}}
                                     <td>
                                         @if($destination->image)
                                             <img src="{{ asset('storage/'.$destination->image) }}" alt="Destination Image" width="80" height="60" class="rounded shadow-sm">
@@ -52,6 +51,7 @@
                                             <span class="text-muted">No Image</span>
                                         @endif
                                     </td>
+
                                     {{-- Status --}}
                                     <td>
                                         @if($destination->status === 'active')
@@ -60,16 +60,14 @@
                                             <span class="badge bg-danger">Inactive</span>
                                         @endif
                                     </td>
+@canany(['edit destination','delete destination'])
 
                                     {{-- Actions --}}
                                     <td>
-                                        {{-- Edit --}}
-                                        <a href="{{ route('destinations.edit', $destination->id) }}"
-                                           class="btn btn-warning btn-sm me-1" title="Edit">
+                                        <a href="{{ route('destinations.edit', $destination->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
 
-                                        {{-- Delete --}}
                                         <form action="{{ route('destinations.destroy', $destination->id) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
@@ -78,6 +76,8 @@
                                             </button>
                                         </form>
                                     </td>
+@endcanany
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -91,7 +91,17 @@
 
     {{-- SweetAlert Script --}}
     <script>
+        // Initialize SweetAlert Toast
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+        });
+
         $(document).ready(function () {
+            // Delete confirmation
             $('.delete-btn').on('click', function (e) {
                 e.preventDefault();
                 let form = $(this).closest('form');
@@ -112,5 +122,23 @@
                 });
             });
         });
-    </script>
+  </script>
+<script>
+    const successMsg = @json(session('success'));
+    const errorMsg = @json(session('error'));
+
+    if (successMsg) {
+        Toast.fire({
+            icon: 'success',
+            title: successMsg
+        });
+    } else if (errorMsg) {
+        Toast.fire({
+            icon: 'error',
+            title: errorMsg
+        });
+    }
+</script>
+
+
 </x-master>

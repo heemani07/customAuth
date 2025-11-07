@@ -2,8 +2,12 @@
     <x-top-bar/>
 
 <div class="container">
-    <x-page-header title="Package Management" route="{{ route('trip-packages.create') }}" buttonValue="package" />
-
+    <!-- <x-page-header title="Package Management" route="{{ route('trip-packages.create') }}" buttonValue="package" /> -->
+<x-page-header
+    title="Package Management"
+    route="{{ route('trip-packages.create') }}"
+    :buttonValue="auth()->user()->can('create destination') ? 'Package' : null"
+/>
     {{-- Toastr Alerts --}}
     @if (session('success') || session('error') || session('info'))
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -48,7 +52,11 @@
                 <th>Destination</th>
                 <th>Category</th>
                 <th>Status</th>
+@canany(['edit package','delete package'])
+
                 <th width="140">Actions</th>
+@endcanany
+
             </tr>
         </thead>
         <tbody>
@@ -63,6 +71,8 @@
                         {{ ucfirst($package->status) }}
                     </span>
                 </td>
+@canany(['edit package','delete package'])
+
                 <td class="text-center">
                     {{-- Edit --}}
                     <a href="{{ route('trip-packages.edit', $package->id) }}"
@@ -84,6 +94,8 @@
                         </button>
                     </form>
                 </td>
+@endcanany
+
             </tr>
             @empty
             <tr><td colspan="6" class="text-center">No packages found.</td></tr>

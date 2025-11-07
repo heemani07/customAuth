@@ -25,23 +25,32 @@ button {
 }
 </style>
 
-<!-- Add Role Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+@php
+    // If user has only read permission (and no create/edit/delete)
+    $canManage = auth()->user()->canany(['create role', 'edit role', 'delete role']);
+    $readOnly = !auth()->user()->canany(['create role', 'edit role', 'delete role']);
+@endphp
+
+<!-- Add/Edit Role Modal -->
+<div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title fw-bold" id="exampleModalLabel">Add New Role</h5>
+                <h5 class="modal-title fw-bold" id="roleModalLabel">Add New Role</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form id="addRoleForm">
+            <form id="roleForm">
                 @csrf
+                <input type="hidden" id="roleId" name="role_id">
+
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="roleName" class="col-form-label fw-semibold">Role Name</label>
                         <input type="text" class="form-control" id="roleName" name="name" placeholder="Enter role name" required>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Save Role</button>
@@ -51,13 +60,18 @@ button {
     </div>
 </div>
 
+
 <!-- Header -->
 <div class="card-header d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0 fw-bold">Role Permission Management</h2>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        + Add Role
-    </button>
+
+    @can('create role')
+        <button type="button" class="btn btn-primary" id="addRoleBtn" data-bs-toggle="modal" data-bs-target="#roleModal">
+            + Add Role
+        </button>
+    @endcan
 </div>
+
 
 <!-- Success Message -->
 @if (session('success'))
@@ -80,12 +94,43 @@ button {
                                 aria-controls="collapse{{ $loop->index }}">
                             {{ ucfirst($role->name) }}
                         </button>
-                        <button type="button"
-                                class="delete-role-btn ms-2"
-                                data-role-id="{{ $role->id }}"
-                                title="Delete Role">
-                            <i class="fas fa-trash"></i>
-                        </button>
+
+                        <div class="d-flex align-items-center">
+                            {{-- Edit Role Button --}}
+                            @if(auth()->user()->can('edit role'))
+                                <button type="button"
+                                        class="btn btn-sm text-primary edit-role-btn me-2"
+                                        data-role-id="{{ $role->id }}"
+                                        data-role-name="{{ $role->name }}"
+                                        title="Edit Role">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            @else
+                                <button type="button"
+                                        class="btn btn-sm text-secondary me-2"
+                                        disabled
+                                        title="No permission to edit">
+                                    <i class="fas fa-edit text-muted"></i>
+                                </button>
+                            @endif
+
+                            {{-- Delete Role Button --}}
+                            @if(auth()->user()->can('delete role'))
+                                <button type="button"
+                                        class="delete-role-btn btn btn-sm text-danger"
+                                        data-role-id="{{ $role->id }}"
+                                        title="Delete Role">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            @else
+                                <button type="button"
+                                        class="btn btn-sm text-muted"
+                                        disabled
+                                        title="No permission to delete">
+                                    <i class="fas fa-trash text-muted"></i>
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </h2>
 
@@ -105,7 +150,8 @@ button {
                                                        type="checkbox"
                                                        id="selectAll_{{ $role->id }}_{{ $module }}"
                                                        data-module="{{ $module }}"
-                                                       data-role="{{ $role->id }}">
+                                                       data-role="{{ $role->id }}"
+                                                       @if($readOnly) disabled @endif>
                                                 <label class="form-check-label small"
                                                        for="selectAll_{{ $role->id }}_{{ $module }}">
                                                     Select All
@@ -129,7 +175,8 @@ button {
                                                                    value="{{ $permission->name }}"
                                                                    data-module="{{ $module }}"
                                                                    data-role="{{ $role->id }}"
-                                                                   {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+                                                                   {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}
+                                                                   @if($readOnly) disabled @endif>
                                                             <label class="form-check-label" for="perm_{{ $role->id }}_{{ $permission->id }}">
                                                                 {{ ucfirst($action) }}
                                                             </label>
@@ -148,29 +195,45 @@ button {
         @endforeach
     </div>
 
+    <!-- Disable Save button for read-only users -->
     <div class="d-flex justify-content-end mt-4">
-        <button class="btn btn-primary px-4" type="submit">Save All Permissions</button>
+        <button class="btn btn-primary px-4" type="submit" @if($readOnly) disabled @endif>
+            Save All Permissions
+        </button>
     </div>
 </form>
+
 
 {{-- JavaScript --}}
 <script>
 $(document).ready(function () {
+    @if($readOnly)
+        $('input, button.delete-role-btn, button.edit-role-btn, #addRoleBtn, #roleForm button[type="submit"]').prop('disabled', true);
+        return;
+    @endif
 
-    // --- Handle Add Role ---
-    $('#addRoleForm').on('submit', function (e) {
+    // Open Add Role Modal
+    $('#addRoleBtn').on('click', function () {
+        $('#roleModalLabel').text('Add New Role');
+        $('#roleForm')[0].reset();
+        $('#roleId').val('');
+    });
+
+    // --- Add/Edit Role Submit ---
+    $('#roleForm').on('submit', function (e) {
         e.preventDefault();
+        const id = $('#roleId').val();
         const formData = $(this).serialize();
-        const modal = $('#exampleModal');
+        const url = id ? "{{ url('roles') }}/" + id : "{{ route('roles.store') }}";
+        const method = id ? "PUT" : "POST";
 
         $.ajax({
-            url: "{{ route('roles.store') }}",
-            type: "POST",
+            url,
+            type: method,
             data: formData,
             success: function (response) {
                 if (response.success) {
-                    modal.modal('hide');
-                    $('#roleName').val('');
+                    $('#roleModal').modal('hide');
                     Swal.fire({
                         toast: true,
                         position: 'top-end',
@@ -179,7 +242,7 @@ $(document).ready(function () {
                         showConfirmButton: false,
                         timer: 2000
                     });
-                    setTimeout(() => location.reload(), 2000);
+                    setTimeout(() => location.reload(), 1000);
                 }
             },
             error: function (xhr) {
@@ -189,7 +252,17 @@ $(document).ready(function () {
         });
     });
 
-    // --- Handle Delete Role ---
+    // --- Edit Role ---
+    $(document).on('click', '.edit-role-btn', function () {
+        const id = $(this).data('role-id');
+        const name = $(this).data('role-name');
+        $('#roleId').val(id);
+        $('#roleName').val(name);
+        $('#roleModalLabel').text('Edit Role');
+        $('#roleModal').modal('show');
+    });
+
+    // --- Delete Role ---
     $(document).on('click', '.delete-role-btn', function () {
         const roleId = $(this).data('role-id');
 
@@ -216,7 +289,7 @@ $(document).ready(function () {
                             showConfirmButton: false,
                             timer: 2000
                         });
-                        setTimeout(() => location.reload(), 2000);
+                        setTimeout(() => location.reload(), 1000);
                     },
                     error: function () {
                         Swal.fire('Failed!', 'Unable to delete the role.', 'error');
@@ -235,8 +308,7 @@ $(document).ready(function () {
         const module = $(this).data('module');
         const role = $(this).data('role');
         const children = getChildren(module, role);
-        const allChecked = children.length && children.filter(':checked').length === children.length;
-        $(this).prop('checked', allChecked);
+        $(this).prop('checked', children.length && children.filter(':checked').length === children.length);
     });
 
     $('.perm-checkbox').on('change', function () {
@@ -259,5 +331,6 @@ $(document).ready(function () {
     });
 });
 </script>
+
 
 </x-master>

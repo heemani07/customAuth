@@ -8,8 +8,12 @@
 </style>
 
 <div class="container">
- <x-page-header title="User Management" route="{{ route('userRegister')}}"  buttonValue="User"/>
-
+ <!-- <x-page-header title="User Management" route="{{ route('userRegister')}}"  buttonValue="User"/> -->
+<x-page-header
+    title="User Management"
+    route="{{ route('userRegister') }}"
+    :buttonValue="auth()->user()->can('create user') ? 'User' : null"
+/>
 
 
     @if ($users->count())
@@ -20,7 +24,11 @@
                     <th>Email</th>
                     <th>Role</th>
                     <th>Status</th>
+@canany(['edit user','delete user'])
+
+
                     <th>Actions</th>
+@endcanany
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +38,7 @@
                     <td>{{ $user->email }}</td>
 <td>
     <div class="mb-3">
-        <select name="role" class="form-control user-role-select" data-user-id="{{ $user->id }}">
+        <select name="role" class="form-control user-role-select"  @cannot('edit user') disabled @endcannot   data-user-id="{{ $user->id }}">
             <option value="">Select a Role</option>
             @foreach ($roles as $role)
                 <option value="{{ $role['id'] }}"
@@ -51,6 +59,9 @@
     @endif
 </td>
 
+@canany(['edit user','delete user'])
+
+
 <td class="text-center">
     {{-- Edit Button --}}
     <a href="{{ route('users.edit', $user->id) }}"
@@ -70,7 +81,7 @@
         </button>
     </form>
 </td>
-
+@endcanany
 
 
                 </tr>

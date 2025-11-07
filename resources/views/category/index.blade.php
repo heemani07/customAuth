@@ -6,11 +6,12 @@
 <div class="container">
 
  <!-- <x-page-header title="Category Management" route="{{ route('categories.create')}}"  buttonValue="Category"/> -->
-  <x-page-header
+<x-page-header
     title="Category Management"
     route="{{ route('categories.create') }}"
-    :buttonValue="auth()->user()->can('create category') ? 'Category' : null.'category'"
+    :buttonValue="auth()->user()->can('create category') ? 'Category' : null"
 />
+
 
     @if ($categories->count())
         <table class="table table-bordered" id="myDataTable">
@@ -18,7 +19,11 @@
                 <tr>
                     <th>Category Name</th>
                     <th>Description</th>
+
+@canany(['edit user','delete user'])
                     <th>Actions</th>
+@endcanany
+
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +32,7 @@
                     <td>{{ $category->category_name }}</td>
                     <td>{{ $category->description }}</td>
 
+@canany(['edit user','delete user'])
 <td class="text-center">
     {{-- Edit Button --}}
     <a href="{{ route('categories.edit', $category->id) }}"
@@ -43,7 +49,7 @@
         </button>
     </form>
 </td>
-
+@endcanany
 
                 </tr>
                 @endforeach

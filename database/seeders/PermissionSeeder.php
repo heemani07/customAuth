@@ -12,8 +12,12 @@ class PermissionSeeder extends Seeder
         $modules = [
             'user' => ['create', 'read', 'edit', 'delete'],
             'category' => ['create', 'read', 'edit', 'delete'],
-            'product' => ['create', 'read'],
-        ];
+            'package' => ['create', 'read', 'edit', 'delete'],
+            'destination' => ['create', 'read', 'edit', 'delete'],
+            'faq' => ['create', 'read', 'edit', 'delete'],
+            'role' => ['create', 'read', 'edit', 'delete'],
+
+     ];
 
         foreach ($modules as $module => $actions)
             array_map(fn($action) =>
