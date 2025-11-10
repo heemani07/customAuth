@@ -49,4 +49,21 @@ public function destroy(Role $role)
     ]);
 }
 
+public function edit(Role $role)
+{
+    return view('roles.edit', compact('role'));
+}
+
+public function update(Request $request, Role $role)
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
+    ]);
+
+    $role->update(['name' => $request->name]);
+
+    return redirect()->route('permissions.index')->with('success', 'Role updated successfully!');
+}
+
+
 }

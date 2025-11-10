@@ -46,6 +46,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/permissions/update', [RolePermissionController::class, 'update'])->name('permissions.update');
     Route::post('/permissions/add-role', [RoleController::class, 'storeRole'])->name('roles.store');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
 
     /*
     |--------------------------------------------------------------------------
