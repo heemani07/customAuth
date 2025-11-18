@@ -140,4 +140,28 @@ class TripPackageController extends Controller
 
         return response()->json(['success' => false, 'message' => 'No file uploaded']);
     }
+
+    // Show packages for a destination
+public function listByDestination($destinationId)
+{
+    $destination = Destination::findOrFail($destinationId);
+
+    $packages = TripPackage::where('destination_id', $destinationId)
+        ->with('images')
+        ->get();
+
+    return view('frontend.packages.index', compact('packages', 'destination'));
+}
+
+
+
+// Show single package
+public function showPackage($id)
+{
+    $package = TripPackage::with(['images', 'destination', 'category'])
+        ->findOrFail($id);
+
+    return view('frontend.packages.show', compact('package'));
+}
+
 }

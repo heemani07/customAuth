@@ -2,27 +2,30 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FaqsController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DestinationController;
-use App\Http\Controllers\FaqsController;
 use App\Http\Controllers\TripPackageController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
+Route::middleware('guest')->group(function () {
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/registration', [AuthController::class, 'registration'])->name('register');
 Route::post('/registration', [AuthController::class, 'postRegistration'])->name('register.post');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +35,8 @@ Route::post('/registration', [AuthController::class, 'postRegistration'])->name(
 Route::middleware('auth')->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     /*
     |--------------------------------------------------------------------------
@@ -46,8 +50,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/permissions/update', [RolePermissionController::class, 'update'])->name('permissions.update');
     Route::post('/permissions/add-role', [RoleController::class, 'storeRole'])->name('roles.store');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
-Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
-Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+    Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+    Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
 
     /*
     |--------------------------------------------------------------------------
@@ -93,13 +97,31 @@ Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.upda
     |--------------------------------------------------------------------------
     */
     Route::resource('faqs', FaqsController::class);
+
+
 });
 
-/*
-|--------------------------------------------------------------------------
-| Default Route (Public)
-|--------------------------------------------------------------------------
-*/
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+        /*
+    |--------------------------------------------------------------------------
+    | landing page
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/', [HomeController::class, 'showLanding'])->name('landing');
+// Show all packages for a destination
+// Show packages under a destination (Frontend)
+Route::get('/destination/{id}/packages',
+    [TripPackageController::class, 'listByDestination'])
+    ->name('packages.index');
+
+// Show single package details (Frontend)
+Route::get('/packages/{id}',
+    [TripPackageController::class, 'showPackage'])
+    ->name('packages.show');
+
+
+Route::post('/contact-send', [ContactController::class, 'send'])->name('contact.send');
+
+
+
+
+

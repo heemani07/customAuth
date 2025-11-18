@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
         UserSeeder::class,
         RoleSeeder::class,
         PermissionSeeder::class,
-        RolePermissionSeeder::class// Call your new seeder here
+        RolePermissionSeeder::class,
+        TestimonySeeder::class// Call your new seeder here
     ]);
 
         User::factory()->create([

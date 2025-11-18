@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\TripPackage;
 use App\Models\Destination;
+
 use App\Http\Requests\StoreDestinationRequest;
 
 class DestinationController extends Controller
@@ -100,6 +102,16 @@ public function destroy(Destination $destination)
 
     return redirect()->route('destinations.index')->with('success', 'Destination deleted successfully!');
 }
+public function packages($id)
+{
+    $destination = Destination::findOrFail($id);
+
+    // Fetch packages for this destination
+    $packages = TripPackage::where('destination_id', $id)->get();
+
+    return view('trip-packages.destination-packages', compact('destination', 'packages'));
+}
+
 
 
 }

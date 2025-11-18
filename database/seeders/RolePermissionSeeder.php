@@ -9,55 +9,44 @@ use App\Models\User;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        // Create roles
+        $editorRole  = Role::firstOrCreate(['name' => 'Editor']);
+        $adminRole   = Role::firstOrCreate(['name' => 'Admin']);
+        $creatorRole = Role::firstOrCreate(['name' => 'Creater']);
 
-        $editorRole = Role::firstOrCreate(['name' => 'Editor']);
-        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
-        $CreatorRole = Role::firstOrCreate(['name' => 'Creater']);
+        // List of modules and actions
+        $modules = [
+            'user', 'category', 'package', 'destination', 'faq', 'role'
+        ];
 
+        $actions = ['create', 'read', 'edit', 'delete'];
 
+        // Create permissions dynamically
+        foreach ($modules as $module) {
+            foreach ($actions as $action) {
+                Permission::firstOrCreate(
+                    ['name' => "$action $module"],
+                    ['module_name' => $module]
+                );
+            }
+        }
 
-        $editpermission = Permission::firstOrCreate(['name' => 'edit user']);
-        $createpermission = Permission::firstOrCreate(['name' => 'create user']);
-        $deletepermission = Permission::firstOrCreate(['name' => 'delete user']);
-        $readpermission = Permission::firstOrCreate(['name' => 'read user']);
+        // Get all permissions
+        $allPermissions = Permission::all();
 
-        $editCatgorypermission = Permission::firstOrCreate(['name' => 'edit category']);
-        $createCatgorypermission = Permission::firstOrCreate(['name' => 'create category']);
-        $deleteCatgorypermission = Permission::firstOrCreate(['name' => 'delete category']);
-        $readCatgorypermission = Permission::firstOrCreate(['name' => 'read category']);
+        // ⭐ Admin gets ALL permissions
+        $adminRole->syncPermissions($allPermissions);
 
+        // Optional: Editor & Creator specific permissions
+        $editorRole->givePermissionTo('edit user');
+        $creatorRole->givePermissionTo('create user');
 
-        $editPackagepermission = Permission::firstOrCreate(['name' => 'edit package']);
-        $createPackagepermission = Permission::firstOrCreate(['name' => 'create package']);
-        $deletePackagepermission = Permission::firstOrCreate(['name' => 'delete package']);
-        $readPackagepermission = Permission::firstOrCreate(['name' => 'read package']);
-
-        $editDesinationpermission = Permission::firstOrCreate(['name' => 'edit destination']);
-        $createDesinationpermission = Permission::firstOrCreate(['name' => 'create destination']);
-        $deleteDesinationpermission = Permission::firstOrCreate(['name' => 'delete destination']);
-        $readDesinationpermission = Permission::firstOrCreate(['name' => 'read destination']);
-
-         $editFaqpermission = Permission::firstOrCreate(['name' => 'edit faq']);
-        $createFaqpermission = Permission::firstOrCreate(['name' => 'create faq']);
-        $deleteFaqpermission = Permission::firstOrCreate(['name' => 'delete faq']);
-        $readFaqpermission = Permission::firstOrCreate(['name' => 'read faq']);
-
-        $editrolepermission = Permission::firstOrCreate(['name' => 'edit role']);
-        $createrolepermission = Permission::firstOrCreate(['name' => 'create role']);
-        $deleterolepermission = Permission::firstOrCreate(['name' => 'delete role']);
-        $readrolepermission = Permission::firstOrCreate(['name' => 'read role']);
-        $editorRole->givePermissionTo($editpermission);
-        //$adminRole->givePermissionTo($permission);
-        $CreatorRole->givePermissionTo($createpermission);
-
+        // Assign Admin role to user ID 1
         $user = User::find(1);
-        $user->assignRole(['admin']);
-
-
-  }
+        if ($user) {
+            $user->assignRole('Admin');
+        }
+    }
 }
